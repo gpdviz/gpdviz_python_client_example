@@ -24,10 +24,10 @@ class Demo(object):
         self.api_client = ApiClient(host=host)
         self.system_api = swagger_client.SystemApi(self.api_client)
         self.stream_api = swagger_client.StreamApi(self.api_client)
-        self.observationsa_api = swagger_client.ObservationsApi()
+        self.observations_api = swagger_client.ObservationsApi(self.api_client)
 
     def run(self):
-        self.list_systems()
+        # self.list_systems()
         self.delete_system()
         self.register_system()
         self.generate_str1()
@@ -45,7 +45,7 @@ class Demo(object):
     def delete_system(self):
         try:
             api_response = self.system_api.delete_system(self.sysid)
-            pprint(api_response)
+            # pprint(api_response)
         except ApiException as e:
             print("Exception when calling SystemApi->delete_system: %s\n" % e)
 
@@ -57,7 +57,7 @@ class Demo(object):
 
         try:
             api_response = self.system_api.register_system(body)
-            pprint(api_response)
+            # pprint(api_response)
         except ApiException as e:
             print("Exception when calling SystemApi->register_system: %s\n" % e)
 
@@ -116,7 +116,7 @@ class Demo(object):
 
         try:
             api_response = self.stream_api.register_stream(self.sysid, body)
-            pprint(api_response)
+            # pprint(api_response)
         except ApiException as e:
             print("Exception when calling StreamApi->register_stream: %s\n" % e)
 
@@ -136,8 +136,8 @@ class Demo(object):
     def add_observations(self, strid, observations):
         body = swagger_client.ObservationsRegister(observations)
         try:
-            api_response = self.observationsa_api.add_observations(self.sysid, strid, body)
-            pprint(api_response)
+            api_response = self.observations_api.add_observations(self.sysid, strid, body)
+            # pprint(api_response)
         except ApiException as e:
             print("Exception when calling ObservationsApi->add_observations: %s\n" % e)
 
@@ -223,7 +223,7 @@ class Demo(object):
 
         try:
             api_response = self.stream_api.register_stream(self.sysid, body)
-            pprint(api_response)
+            # pprint(api_response)
         except ApiException as e:
             print("Exception when calling StreamApi->register_stream: %s\n" % e)
 
@@ -255,7 +255,7 @@ class Demo(object):
 
         try:
             api_response = self.stream_api.register_stream(self.sysid, body)
-            pprint(api_response)
+            # pprint(api_response)
         except ApiException as e:
             print("Exception when calling StreamApi->register_stream: %s\n" % e)
 
@@ -295,7 +295,7 @@ class Demo(object):
 
         try:
             api_response = self.stream_api.register_stream(self.sysid, body)
-            pprint(api_response)
+            # pprint(api_response)
         except ApiException as e:
             print("Exception when calling StreamApi->register_stream: %s\n" % e)
 
