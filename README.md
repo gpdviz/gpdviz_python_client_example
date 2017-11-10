@@ -9,7 +9,7 @@ You can run this gpdviz client demo as follows:
 
 - Install the [`gpdviz_python_client`](https://github.com/gpdviz/gpdviz_python_client) module:
 
-        $ pip install git+https://github.com/gpdviz/gpdviz_python_client.git
+        $ pip install [--upgrade] git+https://github.com/gpdviz/gpdviz_python_client.git
 
 Then, assuming the target [Gpdviz](https://github.com/gpdviz/gpdviz) server 
 is running at `http://localhost:5050`:

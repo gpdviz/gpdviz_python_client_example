@@ -4,14 +4,26 @@
 import random
 from pprint import pprint
 
-import swagger_client
 from swagger_client import ApiClient
+from swagger_client import SensorSystemApi
+from swagger_client import DataStreamApi
+from swagger_client import ObservationApi
+from swagger_client import SensorSystemAdd
+from swagger_client import DataStreamAdd
+from swagger_client import ObservationsAdd
 from swagger_client.models import VariableDef
 from swagger_client.rest import ApiException
+from datetime import datetime
+
 
 BASE_TIMESTAMP_MS = 1503090553000
 
 random.seed(1341)
+
+
+def time_ms_to_iso(time_ms):
+    dt = datetime.fromtimestamp(float(time_ms) / 1000.0)
+    return dt.isoformat() + 'Z'
 
 
 def myrandom():
@@ -22,42 +34,36 @@ class Demo(object):
     def __init__(self, sysid, host):
         self.sysid = sysid
         self.api_client = ApiClient(host=host)
-        self.system_api = swagger_client.SystemApi(self.api_client)
-        self.stream_api = swagger_client.StreamApi(self.api_client)
-        self.observations_api = swagger_client.ObservationsApi(self.api_client)
+        self.system_api = SensorSystemApi(self.api_client)
+        self.stream_api = DataStreamApi(self.api_client)
+        self.observations_api = ObservationApi(self.api_client)
 
     def run(self):
-        # self.list_systems()
-        self.delete_system()
+        # self.delete_system()
         self.register_system()
         self.generate_str1()
         self.generate_str2()
         self.generate_str3()
         self.generate_str4()
 
-    def list_systems(self):
-        try:
-            api_response = self.system_api.list_systems()
-            pprint(api_response)
-        except ApiException as e:
-            print("Exception when calling SystemApi->list_systems: %s\n" % e)
-
     def delete_system(self):
         try:
             api_response = self.system_api.delete_system(self.sysid)
-            # pprint(api_response)
+            if False:
+                pprint(api_response)
         except ApiException as e:
             print("Exception when calling SystemApi->delete_system: %s\n" % e)
 
     def register_system(self):
-        body = swagger_client.SSRegister(
+        body = SensorSystemAdd(
             sysid=self.sysid,
             name="Generated from python client",
         )
 
         try:
             api_response = self.system_api.register_system(body)
-            # pprint(api_response)
+            if False:
+                pprint(api_response)
         except ApiException as e:
             print("Exception when calling SystemApi->register_system: %s\n" % e)
 
@@ -71,7 +77,7 @@ class Demo(object):
 
     def add_str1(self):
         print("add stream str1")
-        body = swagger_client.StreamRegister(
+        body = DataStreamAdd(
             strid="str1",
             name="Stream one",
             description="Description of Stream one",
@@ -116,13 +122,14 @@ class Demo(object):
 
         try:
             api_response = self.stream_api.register_stream(self.sysid, body)
-            # pprint(api_response)
+            if False:
+                pprint(api_response)
         except ApiException as e:
             print("Exception when calling StreamApi->register_stream: %s\n" % e)
 
     def add_str1_polygon(self, timestamp):
         observations = {
-            timestamp: [{
+            time_ms_to_iso(timestamp): [{
                 "geometry": {
                   "type": "Polygon",
                   "coordinates": [
@@ -134,22 +141,23 @@ class Demo(object):
         self.add_observations("str1", observations)
 
     def add_observations(self, strid, observations):
-        body = swagger_client.ObservationsRegister(observations)
+        body = ObservationsAdd(observations)
         try:
             api_response = self.observations_api.add_observations(self.sysid, strid, body)
-            # pprint(api_response)
+            if False:
+                pprint(api_response)
         except ApiException as e:
             print("Exception when calling ObservationsApi->add_observations: %s\n" % e)
 
     def add_scalars(self, strid, timestamp, secs):
-        print("scalarData: %s timestamp=%s  secs=%s" % (strid, timestamp, secs))
+        print("scalarData: %s time_iso=%s  secs=%s" % (strid, time_ms_to_iso(timestamp), secs))
         observations = {}
         for i in range(secs):
             val0 = myrandom() % 1000 - 500
             val1 = myrandom() % 100
             lat =   36.8 + (myrandom() % 1000) / 10000.0
             lon = -122.1 + (myrandom() % 1000) / 10000.0
-            observations[timestamp] = [{
+            observations[time_ms_to_iso(timestamp)] = [{
                 "scalarData": {
                   "vars": ["baz", "temperature"],
                   "vals": [val0, val1],
@@ -166,7 +174,7 @@ class Demo(object):
 
         # geometries:
         observations = {
-            timestamp: [
+            time_ms_to_iso(timestamp): [
                 {
                   "geometry": {
                     "type": "Point",
@@ -195,7 +203,7 @@ class Demo(object):
             val0 = myrandom() % 100 + 1
             val1 = myrandom() % 100 + 1
 
-            observations[timestamp] = [{
+            observations[time_ms_to_iso(timestamp)] = [{
                 "scalarData": {
                   "vars": ["foo", "bar"],
                   "vals": [val0, val1]
@@ -204,7 +212,7 @@ class Demo(object):
 
     def add_str2(self):
         print("add stream str2")
-        body = swagger_client.StreamRegister(
+        body = DataStreamAdd(
             strid="str2",
             variables=[
                 VariableDef(
@@ -223,7 +231,8 @@ class Demo(object):
 
         try:
             api_response = self.stream_api.register_stream(self.sysid, body)
-            # pprint(api_response)
+            if False:
+                pprint(api_response)
         except ApiException as e:
             print("Exception when calling StreamApi->register_stream: %s\n" % e)
 
@@ -233,7 +242,7 @@ class Demo(object):
         timestamp = BASE_TIMESTAMP_MS
 
         observations = {
-            timestamp: [{
+            time_ms_to_iso(timestamp): [{
                 "geometry": {
                     "type": "LineString",
                     "coordinates": [
@@ -246,7 +255,7 @@ class Demo(object):
 
     def add_str3(self):
         print("add stream str3")
-        body = swagger_client.StreamRegister(
+        body = DataStreamAdd(
             strid="str3",
             map_style={
                 "color": "blue"
@@ -255,7 +264,8 @@ class Demo(object):
 
         try:
             api_response = self.stream_api.register_stream(self.sysid, body)
-            # pprint(api_response)
+            if False:
+                pprint(api_response)
         except ApiException as e:
             print("Exception when calling StreamApi->register_stream: %s\n" % e)
 
@@ -265,7 +275,7 @@ class Demo(object):
         timestamp = BASE_TIMESTAMP_MS
 
         observations = {
-            timestamp: [{
+            time_ms_to_iso(timestamp): [{
                   "geometry": {
                     "type": "Point",
                     "coordinates": [-122.09, 36.865]
@@ -278,7 +288,7 @@ class Demo(object):
 
     def add_str4(self):
         print("add stream str4")
-        body = swagger_client.StreamRegister(
+        body = DataStreamAdd(
             strid="str4",
             variables=[
                 VariableDef(
@@ -295,7 +305,8 @@ class Demo(object):
 
         try:
             api_response = self.stream_api.register_stream(self.sysid, body)
-            # pprint(api_response)
+            if False:
+                pprint(api_response)
         except ApiException as e:
             print("Exception when calling StreamApi->register_stream: %s\n" % e)
 
@@ -306,15 +317,16 @@ class Demo(object):
             time.sleep(1)
             timestamp += 1000
             val = myrandom() % 100 + 1
+            time_iso = time_ms_to_iso(timestamp)
             observations = {
-                timestamp: [{
+                time_iso: [{
                     "scalarData": {
                       "vars": [var_name],
                       "vals": [val]
                     }}]
             }
             self.add_observations("str4", observations)
-            print("added observation to %s: timestamp=%s" % (strid, timestamp))
+            print("added observation to %s: time_iso=%s" % (strid, time_iso))
 
 
 if __name__ == "__main__":  # pragma: no cover
